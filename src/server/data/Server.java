@@ -1,9 +1,14 @@
-package client;
+package server.data;
 
-public class Client {
+public class Server {
 
     private int port;
     private String hostname;
+    private String name;
+
+    public Server(String name) {
+        this.name = name;
+    }
 
     public int getPort() {
         return port;

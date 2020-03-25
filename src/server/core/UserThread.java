@@ -1,5 +1,6 @@
-package server;
+package server.core;
 
+import server.core.SocketStreamServer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,10 +12,10 @@ import java.net.Socket;
 public class UserThread extends Thread {
 
     private Socket clientSocket;
-    private ChatServer chatServer;
+    private SocketStreamServer chatServer;
     private PrintWriter writer;
 
-    public UserThread(Socket clientSocket, ChatServer chatServer) {
+    public UserThread(Socket clientSocket, SocketStreamServer chatServer) {
         this.clientSocket = clientSocket;
         this.chatServer = chatServer;
     }
@@ -28,7 +29,7 @@ public class UserThread extends Thread {
     }
 
     public void sendMessage(String message) {
-        writer.println(message);
+        writer.println("\n" + message);
     }
 
     @Override
@@ -55,7 +56,14 @@ public class UserThread extends Thread {
             serverMessage = "[ ! ]\tUser '" + nickName + "' has left the chat.";
             chatServer.broadcast(serverMessage, this);
         } catch (IOException ioe) {
-            System.out.println("[ error ]\tI/O Exception, problems detailed below." + ioe.getMessage());
+            System.out.println("\n[ error ]\tProblem with input/output streams. Errors detailed below:");
+            ioe.printStackTrace();
+        } catch (NullPointerException npe) {
+            System.out.println("\n[ error ]\tClient disconnected wrongly. Errors detailed below:");
+            npe.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("\n[ error ]\tSomething went wrong. Errors detailed below:");
+            e.printStackTrace();
         }
     }
 
